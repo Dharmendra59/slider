@@ -1,0 +1,985 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        /*
+  Note: the original SCSS code below was commented out due to some bug in
+  Codepen's SCSS parser (the code itself is perfectly valid), so I temporarily
+  pasted the compiled CSS for the demo to work.
+*/
+        
+        @import url("https://fonts.googleapis.com/css?family=Lora:700");
+        @import url("https://fonts.googleapis.com/css?family=Open+Sans");
+         :root {
+            --z-distance: 8.519vw;
+            --from-left: 1;
+            --mobile-bkp: 650px;
+        }
+        
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+        
+        body {
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            font-family: Lora, serif;
+            font-size: calc(14px + .3vw);
+            width: 100%;
+        }
+        
+        .slider {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            perspective: 1000px;
+            transform-style: preserve-3d;
+        }
+        
+        .slider::before,
+        .slider::after {
+            content: '';
+            left: -1vw;
+            top: -1vh;
+            display: block;
+            position: absolute;
+            width: 102vw;
+            height: 102vh;
+            background-position: center;
+            background-size: cover;
+            will-change: opacity;
+            z-index: -1;
+            box-shadow: 0 0 0 50vmax rgba(0, 0, 0, 0.7) inset;
+        }
+        
+        .slider::before {
+            background-image: var(--img-prev);
+        }
+        
+        .slider::after {
+            transition: opacity 0.7s;
+            opacity: 0;
+            background-image: var(--img-next);
+        }
+        
+        .slider--bg-next::after {
+            opacity: 1;
+        }
+        
+        .slider__content {
+            margin: auto;
+            width: 65vw;
+            height: 32.5vw;
+            max-height: 60vh;
+            will-change: transform;
+            transform-style: preserve-3d;
+            pointer-events: none;
+            transform: translateZ(var(--z-distance));
+        }
+        
+        .slider__images {
+            overflow: hidden;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            box-shadow: 0 0 5em #000;
+        }
+        
+        .slider__images-item {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            will-change: transform;
+            transition-timing-function: ease-in;
+            visibility: hidden;
+        }
+        
+        .slider__images-item img {
+            display: block;
+            position: relative;
+            left: -1em;
+            top: -1em;
+            width: calc(100% + 1em * 2);
+            height: calc(100% + 1em * 2);
+            object-fit: cover;
+            will-change: transform;
+        }
+        
+        .slider__images-item--active {
+            z-index: 20;
+            visibility: visible;
+        }
+        
+        .slider__images-item--subactive {
+            z-index: 15;
+            visibility: visible;
+        }
+        
+        .slider__images-item--next {
+            transform: translateX(100%);
+        }
+        
+        .slider__images-item--prev {
+            transform: translateX(-100%);
+        }
+        
+        .slider__images-item--transit {
+            transition: transform 0.7s, opacity 0.7s;
+        }
+        
+        .slider__text {
+            position: relative;
+            height: 100%;
+        }
+        
+        .slider__text-item {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            padding: 0.5em;
+            perspective: 1000px;
+            transform-style: preserve-3d;
+        }
+        
+        .slider__text-item>* {
+            overflow: hidden;
+            position: absolute;
+        }
+        
+        .slider__text-item h3,
+        .slider__text-item p {
+            transition: transform 0.35s ease-out;
+            line-height: 1.5;
+            overflow: hidden;
+        }
+        
+        .slider__text-item h3 {
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .slider__text-item p {
+            font-family: 'Open Sans', sans-serif;
+            padding: 1em;
+            color: white;
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        
+        .slider__text-item h3::before,
+        .slider__text-item p::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 105%;
+            height: 100%;
+            transform: translateX(0);
+            transition: transform 0.35s ease-out 0.28s;
+        }
+        
+        .slider__text-item h3::before {
+            background-color: #000;
+        }
+        
+        .slider__text-item p::before {
+            background-color: #fff;
+        }
+        
+        .slider__text-item h3 {
+            margin: 0;
+            font-size: 3.5em;
+            padding: 0 .3em;
+            position: relative;
+            font-weight: 700;
+            transform: translateX(-100%);
+        }
+        
+        .slider__text-item p {
+            margin: 0;
+            transform: translateX(100%);
+        }
+        
+        .slider__text-item-head {
+            top: -0.5em;
+            transform: translateZ(3em);
+        }
+        
+        .slider__text-item-info {
+            bottom: 0;
+            right: 0;
+            max-width: 75%;
+            min-width: min-content;
+            transform: translateZ(2em);
+        }
+        
+        .slider__text-item--active h3,
+        .slider__text-item--active p {
+            transform: translateX(0);
+        }
+        
+        .slider__text-item--active h3::before {
+            transform: translateX(102%);
+        }
+        
+        .slider__text-item--active p::before {
+            transform: translateX(-102%);
+        }
+        
+        .slider__text-item--backwards h3::before,
+        .slider__text-item--backwards p::before {
+            transition: transform 0.35s ease-in;
+        }
+        
+        .slider__text-item--backwards h3,
+        .slider__text-item--backwards p {
+            transition: transform 0.35s ease-in 0.35s;
+        }
+        
+        .slider__nav {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+        }
+        
+        .slider__nav-arrows {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        .slider__nav-arrow {
+            height: 100vh;
+            width: 50vw;
+            text-indent: -9999px;
+            white-space: nowrap;
+        }
+        
+        .slider__nav-arrow--left {
+            --arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 4 4'%3E %3Cpolyline points='3 1 1 2 3 3' stroke='white' stroke-width='.3' stroke-opacity='.5' fill='none'%3E%3C/polyline%3E %3C/svg%3E");
+            cursor: var(--arrow) 40 40, auto;
+        }
+        
+        .slider__nav-arrow--right {
+            --arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 4 4'%3E %3Cpolyline points='1 1 3 2 1 3' stroke='white' stroke-width='.3' stroke-opacity='.5' fill='none'%3E%3C/polyline%3E %3C/svg%3E");
+            cursor: var(--arrow) 40 40, auto;
+        }
+        
+        .slider__nav-dots {
+            margin-top: 88vh;
+            display: inline-flex;
+            position: relative;
+            padding: 1em;
+            pointer-events: none;
+        }
+        
+        .slider__nav-dots::before {
+            content: '';
+            position: absolute;
+            left: calc(1em + 1em + 2px);
+            top: calc(1em + 2px);
+            width: calc(1em - 2px * 2);
+            height: calc(1em / 2 - 2px * 2);
+            background-color: rgba(255, 255, 255, 0.9);
+            transition: transform 0.7s ease-out;
+            transform: translateX(calc((1em + 1em * 2) * (var(--from-left) - 1)));
+        }
+        
+        .slider__nav-dot {
+            margin: 0 1em;
+            width: 1em;
+            height: 0.5em;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            cursor: crosshair;
+            pointer-events: all;
+            display: inline-block;
+        }
+        
+        .slider__nav-dot:hover {
+            border-color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .slider__nav-dot:active {
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+        
+        @media only screen and (max-width: 650px) {
+            .slider::before,
+            .slider::after {
+                display: none;
+            }
+            .slider__content {
+                width: 100vw;
+                height: 100vh;
+                max-height: 100vh;
+            }
+            .slider__text-item-info {
+                bottom: 50%;
+                left: 50%;
+                transform: translate(-50%, 50%);
+            }
+            .slider__text-item-info p {
+                padding: 1em .8em;
+            }
+            .slider__text-item-head {
+                top: 5vh;
+                left: 10vw;
+                transform: translateZ(0);
+            }
+            .slider__text-item-head h3 {
+                font-size: 2.5em;
+            }
+            .slider__nav-dots {
+                background-color: rgba(0, 0, 0, 0.3);
+            }
+            .slider__nav-arrow {
+                width: 10vw;
+                position: relative;
+                cursor: auto;
+            }
+            .slider__nav-arrow:active {
+                filter: brightness(0.5);
+            }
+            .slider__nav-arrow::before {
+                content: '';
+                background-image: var(--arrow);
+                background-size: cover;
+                width: 8vw;
+                height: 8vw;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+            .slider__nav-arrow--left {
+                background-image: linear-gradient(to right, rgba(0, 0, 0, 0.7) 0, transparent 100%);
+            }
+            .slider__nav-arrow--left:active {
+                background-image: linear-gradient(to right, rgba(0, 0, 0, 0.9) 0, transparent 100%);
+            }
+            .slider__nav-arrow--right {
+                background-image: linear-gradient(to left, rgba(0, 0, 0, 0.7) 0, transparent 100%);
+            }
+            .slider__nav-arrow--right:active {
+                background-image: linear-gradient(to left, rgba(0, 0, 0, 0.9) 0, transparent 100%);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <div class="slider" id="slider" style="--img-prev:url(https://lh3.googleusercontent.com/aC9nyW5dhaYFmWD8fcf8DApjpH08eHEkbCHqmUPHRQ5T3jK-QyNKZYVMehmrvyPdEA_KxWvgZ3_kyOOYOAv99Ow3UoKSvEloleVKGSfLOwOyDV3Q6Dwi1G-NYoa9-t_ofmmskE6BYnVIOnIz2HWlMcijzIEwvKAL_R4z63DaLgG0z_OcGiSQHunwGAPXrBQUv42ZXuIMODq4zxDHczSxJ72b0-_udtdQK3JuT2X8nXCwFoF7GxmOpzXS0H5f50DuCbXoXcx-O7bgBMCXZdMpTxB27-wdXeLmxpYUySXgjSN2NAKmK16DmGLYvw5tMlrqwb8h4MJEEbXjP1pjPxXsahb7UZseEGyn80uLjATANJvusyJWCtzkkxYXPz-yI1rDvfEJKe2eyA-5AvFlzFBSwBMASn8f7mXinUrXMMREkJQjoi89NfZ91G7253OEVQOqcWxddiYtcHCO5v6Pl3QfV2SUTWXgggscDSY2ezjSPpYERNTXnIM_aCyWmIG7ybrfqOB0eVYBAgynyuPVbjd4KuZWZq2Dfu33HX1RuPKglbOuZGD1QbpJnruvUVkAmjDXI40ENN7X=w1600-h766);">
+            <div class="nav" style="height:100px;width:100%;background-color:red;display:flex;position:absolute"></div>
+
+            <div class="slider__content" id="slider-content">
+
+                <div class="slider__images">
+                    <div class="slider__images-item slider__images-item--active" data-id="1"><img src="img/taj.jpg" /></div>
+                    <div class="slider__images-item" data-id="2"><img src="img/redfort.jpeg" /></div>
+                    <div class="slider__images-item" data-id="3"><img src="img/golden.jpg" /></div>
+                    <div class="slider__images-item" data-id="4"><img src="img/lotus.jpeg" /></div>
+                    <div class="slider__images-item" data-id="5"><img src="img/tajday.jpg" /></div>
+                </div>
+                <div class="slider__text">
+                    <div class="slider__text-item slider__text-item--active" data-id="1">
+                        <div class="slider__text-item-head">
+                            <h3>Taj Mahal</h3>
+                        </div>
+                        <div class="slider__text-item-info">
+                            <p>“And into the forest I go, to lose my mind and find my soul”</p>
+                        </div>
+                    </div>
+                    <div class="slider__text-item" data-id="2">
+                        <div class="slider__text-item-head">
+                            <h3>Red Fort</h3>
+                        </div>
+                        <div class="slider__text-item-info">
+                            <p>“Mist to mist, drops to drops. For water thou art, and unto water shalt thou return”</p>
+                        </div>
+                    </div>
+                    <div class="slider__text-item" data-id="3">
+                        <div class="slider__text-item-head">
+                            <h3>Golden Temple</h3>
+                        </div>
+                        <div class="slider__text-item-info">
+                            <p>“Go to the edge of the cliff and jump off. Build your wings on the way down”</p>
+                        </div>
+                    </div>
+                    <div class="slider__text-item" data-id="4">
+                        <div class="slider__text-item-head">
+                            <h3>Lotus Temple</h3>
+                        </div>
+                        <div class="slider__text-item-info">
+                            <p>“What are men to rocks and mountains?”</p>
+                        </div>
+                    </div>
+                    <div class="slider__text-item" data-id="5">
+                        <div class="slider__text-item-head">
+                            <h3>Taj</h3>
+                        </div>
+                        <div class="slider__text-item-info">
+                            <p>“On all the peaks lies peace”</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slider__nav">
+                <div class="slider__nav-arrows">
+                    <div class="slider__nav-arrow slider__nav-arrow--left" id="left">to left</div>
+                    <div class="slider__nav-arrow slider__nav-arrow--right" id="right">to right</div>
+                </div>
+                <div class="slider__nav-dots" id="slider-dots">
+                    <div class="slider__nav-dot slider__nav-dot--active" data-id="1"></div>
+                    <div class="slider__nav-dot" data-id="2"></div>
+                    <div class="slider__nav-dot" data-id="3"></div>
+                    <div class="slider__nav-dot" data-id="4"></div>
+                    <div class="slider__nav-dot" data-id="5"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="section1" style="height: 800px;width:100%;background-color:red"></div>
+
+    <script>
+        /*
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              More about this function - 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              https://codepen.io/rachsmith/post/animation-tip-lerp
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            */
+        function lerp({
+            x,
+            y
+        }, {
+            x: targetX,
+            y: targetY
+        }) {
+            const fraction = 0.1;
+
+            x += (targetX - x) * fraction;
+            y += (targetY - y) * fraction;
+
+            return {
+                x,
+                y
+            };
+        }
+
+        class Slider {
+            constructor(el) {
+                const imgClass = this.IMG_CLASS = 'slider__images-item';
+                const textClass = this.TEXT_CLASS = 'slider__text-item';
+                const activeImgClass = this.ACTIVE_IMG_CLASS = `${imgClass}--active`;
+                const activeTextClass = this.ACTIVE_TEXT_CLASS = `${textClass}--active`;
+
+                this.el = el;
+                this.contentEl = document.getElementById('slider-content');
+                this.onMouseMove = this.onMouseMove.bind(this);
+
+                // taking advantage of the live nature of 'getElement...' methods
+                this.activeImg = el.getElementsByClassName(activeImgClass);
+                this.activeText = el.getElementsByClassName(activeTextClass);
+                this.images = el.getElementsByTagName('img');
+
+                document.getElementById('slider-dots')
+                    .addEventListener('click', this.onDotClick.bind(this));
+
+                document.getElementById('left')
+                    .addEventListener('click', this.prev.bind(this));
+
+                document.getElementById('right')
+                    .addEventListener('click', this.next.bind(this));
+
+                window.addEventListener('resize', this.onResize.bind(this));
+
+                this.onResize();
+
+                this.length = this.images.length;
+                this.lastX = this.lastY = this.targetX = this.targetY = 0;
+            }
+            onResize() {
+                const htmlStyles = getComputedStyle(document.documentElement);
+                const mobileBreakpoint = htmlStyles.getPropertyValue('--mobile-bkp');
+
+                const isMobile = this.isMobile = matchMedia(
+                    `only screen and (max-width: ${mobileBreakpoint})`
+                ).matches;
+
+                this.halfWidth = innerWidth / 2;
+                this.halfHeight = innerHeight / 2;
+                this.zDistance = htmlStyles.getPropertyValue('--z-distance');
+
+                if (!isMobile && !this.mouseWatched) {
+                    this.mouseWatched = true;
+                    this.el.addEventListener('mousemove', this.onMouseMove);
+                    this.el.style.setProperty(
+                        '--img-prev',
+                        `url(${this.images[+this.activeImg[0].dataset.id - 1].src})`
+                    );
+                    this.contentEl.style.setProperty('transform', `translateZ(${this.zDistance})`);
+                } else if (isMobile && this.mouseWatched) {
+                    this.mouseWatched = false;
+                    this.el.removeEventListener('mousemove', this.onMouseMove);
+                    this.contentEl.style.setProperty('transform', 'none');
+                }
+            }
+            getMouseCoefficients({
+                pageX,
+                pageY
+            } = {}) {
+                const halfWidth = this.halfWidth;
+                const halfHeight = this.halfHeight;
+                const xCoeff = ((pageX || this.targetX) - halfWidth) / halfWidth;
+                const yCoeff = (halfHeight - (pageY || this.targetY)) / halfHeight;
+
+                return {
+                    xCoeff,
+                    yCoeff
+                }
+            }
+            onMouseMove({
+                pageX,
+                pageY
+            }) {
+                this.targetX = pageX;
+                this.targetY = pageY;
+
+                if (!this.animationRunning) {
+                    this.animationRunning = true;
+                    this.runAnimation();
+                }
+            }
+            runAnimation() {
+                if (this.animationStopped) {
+                    this.animationRunning = false;
+                    return;
+                }
+
+                const maxX = 10;
+                const maxY = 10;
+
+                const newPos = lerp({
+                    x: this.lastX,
+                    y: this.lastY
+                }, {
+                    x: this.targetX,
+                    y: this.targetY
+                });
+
+                const {
+                    xCoeff,
+                    yCoeff
+                } = this.getMouseCoefficients({
+                    pageX: newPos.x,
+                    pageY: newPos.y
+                });
+
+                this.lastX = newPos.x;
+                this.lastY = newPos.y;
+
+                this.positionImage({
+                    xCoeff,
+                    yCoeff
+                });
+
+                this.contentEl.style.setProperty('transform', `
+        translateZ(${this.zDistance})
+        rotateX(${maxY * yCoeff}deg)
+        rotateY(${maxX * xCoeff}deg)
+      `);
+
+                if (this.reachedFinalPoint) {
+                    this.animationRunning = false;
+                } else {
+                    requestAnimationFrame(this.runAnimation.bind(this));
+                }
+            }
+            get reachedFinalPoint() {
+                const lastX = ~~this.lastX;
+                const lastY = ~~this.lastY;
+                const targetX = this.targetX;
+                const targetY = this.targetY;
+
+                return (lastX == targetX || lastX - 1 == targetX || lastX + 1 == targetX) &&
+                    (lastY == targetY || lastY - 1 == targetY || lastY + 1 == targetY);
+            }
+            positionImage({
+                xCoeff,
+                yCoeff
+            }) {
+                const maxImgOffset = 1;
+                const currentImage = this.activeImg[0].children[0];
+
+                currentImage.style.setProperty('transform', `
+        translateX(${maxImgOffset * -xCoeff}em)
+        translateY(${maxImgOffset * yCoeff}em)
+      `);
+            }
+            onDotClick({
+                target
+            }) {
+                if (this.inTransit) return;
+
+                const dot = target.closest('.slider__nav-dot');
+
+                if (!dot) return;
+
+                const nextId = dot.dataset.id;
+                const currentId = this.activeImg[0].dataset.id;
+
+                if (currentId == nextId) return;
+
+                this.startTransition(nextId);
+            }
+            transitionItem(nextId) {
+                function onImageTransitionEnd(e) {
+                    e.stopPropagation();
+
+                    nextImg.classList.remove(transitClass);
+
+                    self.inTransit = false;
+
+                    this.className = imgClass;
+                    this.removeEventListener('transitionend', onImageTransitionEnd);
+                }
+
+                const self = this;
+                const el = this.el;
+                const currentImg = this.activeImg[0];
+                const currentId = currentImg.dataset.id;
+                const imgClass = this.IMG_CLASS;
+                const textClass = this.TEXT_CLASS;
+                const activeImgClass = this.ACTIVE_IMG_CLASS;
+                const activeTextClass = this.ACTIVE_TEXT_CLASS;
+                const subActiveClass = `${imgClass}--subactive`;
+                const transitClass = `${imgClass}--transit`;
+                const nextImg = el.querySelector(`.${imgClass}[data-id='${nextId}']`);
+                const nextText = el.querySelector(`.${textClass}[data-id='${nextId}']`);
+
+                let outClass = '';
+                let inClass = '';
+
+                this.animationStopped = true;
+
+                nextText.classList.add(activeTextClass);
+
+                el.style.setProperty('--from-left', nextId);
+
+                currentImg.classList.remove(activeImgClass);
+                currentImg.classList.add(subActiveClass);
+
+                if (currentId < nextId) {
+                    outClass = `${imgClass}--next`;
+                    inClass = `${imgClass}--prev`;
+                } else {
+                    outClass = `${imgClass}--prev`;
+                    inClass = `${imgClass}--next`;
+                }
+
+                nextImg.classList.add(outClass);
+
+                requestAnimationFrame(() => {
+                    nextImg.classList.add(transitClass, activeImgClass);
+                    nextImg.classList.remove(outClass);
+
+                    this.animationStopped = false;
+                    this.positionImage(this.getMouseCoefficients());
+
+                    currentImg.classList.add(transitClass, inClass);
+                    currentImg.addEventListener('transitionend', onImageTransitionEnd);
+                });
+
+                if (!this.isMobile)
+                    this.switchBackgroundImage(nextId);
+            }
+            startTransition(nextId) {
+                function onTextTransitionEnd(e) {
+                    if (!e.pseudoElement) {
+                        e.stopPropagation();
+
+                        requestAnimationFrame(() => {
+                            self.transitionItem(nextId);
+                        });
+
+                        this.removeEventListener('transitionend', onTextTransitionEnd);
+                    }
+                }
+
+                if (this.inTransit) return;
+
+                const activeText = this.activeText[0];
+                const backwardsClass = `${this.TEXT_CLASS}--backwards`;
+                const self = this;
+
+                this.inTransit = true;
+
+                activeText.classList.add(backwardsClass);
+                activeText.classList.remove(this.ACTIVE_TEXT_CLASS);
+                activeText.addEventListener('transitionend', onTextTransitionEnd);
+
+                requestAnimationFrame(() => {
+                    activeText.classList.remove(backwardsClass);
+                });
+            }
+            next() {
+                if (this.inTransit) return;
+
+                let nextId = +this.activeImg[0].dataset.id + 1;
+
+                if (nextId > this.length)
+                    nextId = 1;
+
+                this.startTransition(nextId);
+            }
+            prev() {
+                if (this.inTransit) return;
+
+                let nextId = +this.activeImg[0].dataset.id - 1;
+
+                if (nextId < 1)
+                    nextId = this.length;
+
+                this.startTransition(nextId);
+            }
+            switchBackgroundImage(nextId) {
+                function onBackgroundTransitionEnd(e) {
+                    if (e.target === this) {
+                        this.style.setProperty('--img-prev', imageUrl);
+                        this.classList.remove(bgClass);
+                        this.removeEventListener('transitionend', onBackgroundTransitionEnd);
+                    }
+                }
+
+                const bgClass = 'slider--bg-next';
+                const el = this.el;
+                const imageUrl = `url(${this.images[+nextId - 1].src})`;
+
+                el.style.setProperty('--img-next', imageUrl);
+                el.addEventListener('transitionend', onBackgroundTransitionEnd);
+                el.classList.add(bgClass);
+            }
+        }
+
+        const sliderEl = document.getElementById('slider');
+        const slider = new Slider(sliderEl);
+
+        // ------------------ Demo stuff ------------------------ //
+
+        let timer = 0;
+
+        function autoSlide() {
+            requestAnimationFrame(() => {
+                slider.next();
+            });
+
+            timer = setTimeout(autoSlide, 5000);
+        }
+
+        function stopAutoSlide() {
+            clearTimeout(timer);
+
+            this.removeEventListener('touchstart', stopAutoSlide);
+            this.removeEventListener('mousemove', stopAutoSlide);
+        }
+
+        sliderEl.addEventListener('mousemove', stopAutoSlide);
+        sliderEl.addEventListener('touchstart', stopAutoSlide);
+
+        timer = setTimeout(autoSlide, 2000);
+    </script>
+</body>
+
+</html> -->
+
+
+
+
+
+<!-- Rotational Slider -->
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Rotational Slider</title>
+    <style>
+        *,
+        *:after,
+        *:before {
+            box-sizing: border-box;
+        }
+        
+        body {
+            /*background: var(--gradient-1);*/
+            background: var(--gray-2);
+            display: grid;
+            place-items: center;
+            min-height: 100vh;
+            font-family: 'Google Sans', sans-serif, system-ui;
+        }
+        
+        .track-wrapper {
+            width: 80%;
+            max-inline-size: var(--size-content-3);
+            overflow: hidden;
+            -webkit-mask: linear-gradient(90deg, transparent 0, black 15% 85%, transparent) 0 50% / 100% calc(100% - (2 * var(--size-4))) no-repeat, linear-gradient(0deg, black, black) 50% 0 / 100% var(--size-4) no-repeat, linear-gradient(0deg, black, black) 50% 100% / 100% var(--size-4) no-repeat;
+        }
+        
+        img {
+            height: 100%;
+            width: 100%;
+        }
+        
+        .track {
+            --size: clamp(200px, 40vmin, 50rem);
+            height: var(--size);
+            width: 100%;
+            display: flex;
+            overflow: overlay;
+            gap: var(--size-4);
+            list-style-type: none;
+            margin: 0;
+            /*background: hsl(0 0% 100% / 0.25);*/
+            padding: var(--size-4) 33%;
+            -ms-scroll-snap-type: x mandatory;
+            scroll-snap-type: x mandatory;
+            /* Circular inverted */
+            /* -webkit-mask-image: radial-gradient(ellipse at 50% 66%, black 0 30%, transparent 30%);
+            /* No Scrollbar */
+            /* -webkit-mask: radial-gradient(#0000 0 30%, #000 30%) 50% 20vmin / 240% 100%;*/
+            /* Winner */
+            /*-webkit-mask: radial-gradient(#0000 0 30%, #000 30%) 50% calc(var(--size) * 0.5) / 250% 100%,
+                                        linear-gradient(0deg, black, black) 50% 0 / 100% var(--size-4) no-repeat,
+                                        linear-gradient(0deg, black, black) 50% 100% / 100% var(--size-4) no-repeat;*/
+            -webkit-mask: radial-gradient(#0000 0 30%, #000 30.5%) 50% calc(var(--size) * 0.5) / 300% 100%, linear-gradient(0deg, black, black) 50% 0 / 100% var(--size-4) no-repeat, linear-gradient(0deg, black, black) 50% 100% / 100% var(--size-4) no-repeat;
+        }
+        
+        .track__item {
+            height: 100%;
+            aspect-ratio: 1;
+            background: hsl(0 80% 50% / 1);
+            /*background: var(--surface-2);*/
+            scroll-snap-align: center;
+            /*display: none;*/
+        }
+        
+        h1 {
+            position: fixed;
+            margin: 0;
+            opacity: 0.5;
+            bottom: var(--size-3);
+            right: var(--size-3);
+            font-size: var(--font-size-fluid-1);
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Horizontal Scroll</h1>
+    <div class="track-wrapper">
+        <ul class="track">
+            <li class="track__item">
+                <img src="https://images.unsplash.com/photo-1523437237164-d442d57cc3c9?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=300&ixid=MnwxfDB8MXxyYW5kb218MHx8bGFuZHNjYXBlfHx8fHx8MTY1OTA1NDYzMw&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=300"
+                    alt="" width="300" height="300" />
+            </li>
+            <li class="track__item">
+                <img src="https://images.unsplash.com/photo-1421930866250-aa0594cea05c?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=300&ixid=MnwxfDB8MXxyYW5kb218MHx8bGFuZHNjYXBlfHx8fHx8MTY1OTA1NDYzNQ&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=300"
+                    alt="" width="300" height="300" />
+            </li>
+            <li class="track__item">
+                <img src="https://images.unsplash.com/photo-1536152470836-b943b246224c?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=300&ixid=MnwxfDB8MXxyYW5kb218MHx8bGFuZHNjYXBlfHx8fHx8MTY1OTA1NDYzNw&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=300"
+                    alt="" width="300" height="300" />
+            </li>
+            <li class="track__item">
+                <img src="https://images.unsplash.com/photo-1491824989090-cc2d0b57eb0d?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=300&ixid=MnwxfDB8MXxyYW5kb218MHx8bGFuZHNjYXBlfHx8fHx8MTY1OTA1NDYzOQ&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=300"
+                    alt="" width="300" height="300" />
+            </li>
+            <li class="track__item">
+                <img src="https://images.unsplash.com/photo-1518717202715-9fa9d099f58a?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=300&ixid=MnwxfDB8MXxyYW5kb218MHx8bGFuZHNjYXBlfHx8fHx8MTY1OTA1NDY0MQ&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=300"
+                    alt="" width="300" height="300" />
+            </li>
+            <li class="track__item">
+                <img src="https://images.unsplash.com/photo-1507608869274-d3177c8bb4c7?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=300&ixid=MnwxfDB8MXxyYW5kb218MHx8bGFuZHNjYXBlfHx8fHx8MTY1OTA1NDY0Mg&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=300"
+                    alt="" width="300" height="300" />
+            </li>
+            <li class="track__item">
+                <img src="https://images.unsplash.com/photo-1421930866250-aa0594cea05c?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=300&ixid=MnwxfDB8MXxyYW5kb218MHx8bGFuZHNjYXBlfHx8fHx8MTY1OTA1NDY0NA&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=300"
+                    alt="" width="300" height="300" />
+            </li>
+            <li class="track__item">
+                <img src="https://images.unsplash.com/photo-1459213599465-03ab6a4d5931?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=300&ixid=MnwxfDB8MXxyYW5kb218MHx8bGFuZHNjYXBlfHx8fHx8MTY1OTA1NDY0NQ&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=300"
+                    alt="" width="300" height="300" />
+            </li>
+            <li class="track__item">
+                <img src="https://images.unsplash.com/photo-1495107334309-fcf20504a5ab?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=300&ixid=MnwxfDB8MXxyYW5kb218MHx8bGFuZHNjYXBlfHx8fHx8MTY1OTA1NDY0Nw&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=300"
+                    alt="" width="300" height="300" />
+            </li>
+            <li class="track__item">
+                <img src="https://images.unsplash.com/photo-1453791052107-5c843da62d97?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=300&ixid=MnwxfDB8MXxyYW5kb218MHx8bGFuZHNjYXBlfHx8fHx8MTY1OTA1NDY0OA&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=300"
+                    alt="" width="300" height="300" />
+            </li>
+            <li class="track__item">
+                <img src="https://images.unsplash.com/photo-1471978445661-ad6ec1f5ba50?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=300&ixid=MnwxfDB8MXxyYW5kb218MHx8bGFuZHNjYXBlfHx8fHx8MTY1OTA1NDY1MQ&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=300"
+                    alt="" width="300" height="300" />
+            </li>
+            <li class="track__item">
+                <img src="https://images.unsplash.com/photo-1523978591478-c753949ff840?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=300&ixid=MnwxfDB8MXxyYW5kb218MHx8bGFuZHNjYXBlfHx8fHx8MTY1OTA1NDY1Mg&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=300"
+                    alt="" width="300" height="300" />
+            </li>
+            <li class="track__item">
+                <img src="https://images.unsplash.com/photo-1489549132488-d00b7eee80f1?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=300&ixid=MnwxfDB8MXxyYW5kb218MHx8bGFuZHNjYXBlfHx8fHx8MTY1OTA1NDY1NA&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=300"
+                    alt="" width="300" height="300" />
+            </li>
+            <li class="track__item">
+                <img src="https://images.unsplash.com/photo-1559827291-72ee739d0d9a?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=300&ixid=MnwxfDB8MXxyYW5kb218MHx8bGFuZHNjYXBlfHx8fHx8MTY1OTA1NDY1NQ&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=300"
+                    alt="" width="300" height="300" />
+            </li>
+            <li class="track__item">
+                <img src="https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=300&ixid=MnwxfDB8MXxyYW5kb218MHx8bGFuZHNjYXBlfHx8fHx8MTY1OTA1NDY1Nw&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=300"
+                    alt="" width="300" height="300" />
+            </li>
+            <li class="track__item">
+                <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=300&ixid=MnwxfDB8MXxyYW5kb218MHx8bGFuZHNjYXBlfHx8fHx8MTY1OTA1NDY1OA&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=300"
+                    alt="" width="300" height="300" />
+            </li>
+            <li class="track__item">
+                <img src="https://images.unsplash.com/photo-1495312040802-a929cd14a6ab?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=300&ixid=MnwxfDB8MXxyYW5kb218MHx8bGFuZHNjYXBlfHx8fHx8MTY1OTA1NDY1OQ&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=300"
+                    alt="" width="300" height="300" />
+            </li>
+            <li class="track__item">
+                <img src="https://images.unsplash.com/photo-1465147264724-326b45c3c59b?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=300&ixid=MnwxfDB8MXxyYW5kb218MHx8bGFuZHNjYXBlfHx8fHx8MTY1OTA1NDY2MQ&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=300"
+                    alt="" width="300" height="300" />
+            </li>
+            <li class="track__item">
+                <img src="https://images.unsplash.com/photo-1421930866250-aa0594cea05c?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=300&ixid=MnwxfDB8MXxyYW5kb218MHx8bGFuZHNjYXBlfHx8fHx8MTY1OTA1NDY2Mg&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=300"
+                    alt="" width="300" height="300" />
+            </li>
+            <li class="track__item">
+                <img src="https://images.unsplash.com/photo-1584148721201-b6432e0d5106?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=300&ixid=MnwxfDB8MXxyYW5kb218MHx8bGFuZHNjYXBlfHx8fHx8MTY1OTA1NDY2Mw&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=300"
+                    alt="" width="300" height="300">
+            </li>
+        </ul>
+    </div>
+</body>
+
+</html>
