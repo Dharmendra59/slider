@@ -1,3 +1,30 @@
+let tl = gsap.timeline();
+tl.from('.rf', {
+    y: 30,
+    opacity: 0,
+    duration: 1,
+    scale: 0.2,
+
+
+}, 'a')
+
+
+
+tl.to('.rf', {
+
+    opacity: 0,
+    duration: 1.4,
+    delay: 2,
+    scale: 1,
+
+
+}, 'a')
+tl.to('.main', {
+    scale: 1,
+    duration: 0,
+
+}, 'b')
+
 function lerp({
     x,
     y
@@ -64,7 +91,7 @@ class Slider {
             this.mouseWatched = true;
             this.el.addEventListener('mousemove', this.onMouseMove);
             this.el.style.setProperty(
-                '--img-prev',
+                '--imge-prev',
                 `url(${this.images[+this.activeImg[0].dataset.id - 1].src})`
             );
             this.contentEl.style.setProperty('transform', `translateZ(${this.zDistance})`);
@@ -295,7 +322,7 @@ translateY(${maxImgOffset * yCoeff}em)
     switchBackgroundImage(nextId) {
         function onBackgroundTransitionEnd(e) {
             if (e.target === this) {
-                this.style.setProperty('--img-prev', imageUrl);
+                this.style.setProperty('--imge-prev', imageUrl);
                 this.classList.remove(bgClass);
                 this.removeEventListener('transitionend', onBackgroundTransitionEnd);
             }
@@ -305,7 +332,7 @@ translateY(${maxImgOffset * yCoeff}em)
         const el = this.el;
         const imageUrl = `url(${this.images[+nextId - 1].src})`;
 
-        el.style.setProperty('--img-next', imageUrl);
+        el.style.setProperty('--imge-next', imageUrl);
         el.addEventListener('transitionend', onBackgroundTransitionEnd);
         el.classList.add(bgClass);
     }
@@ -337,3 +364,83 @@ sliderEl.addEventListener('mousemove', stopAutoSlide);
 sliderEl.addEventListener('touchstart', stopAutoSlide);
 
 timer = setTimeout(autoSlide, 2000);
+document.addEventListener("DOMContentLoaded", function() {
+    const carousel = document.querySelector(".carousel");
+    const arrowBtns = document.querySelectorAll(".wrapper i");
+    const wrapper = document.querySelector(".wrapper");
+
+    const firstCard = carousel.querySelector(".card");
+    const firstCardWidth = firstCard.offsetWidth;
+
+    let isDragging = false,
+        startX,
+        startScrollLeft,
+        timeoutId;
+
+    const dragStart = (e) => {
+        isDragging = true;
+        carousel.classList.add("dragging");
+        startX = e.pageX;
+        startScrollLeft = carousel.scrollLeft;
+    };
+
+    const dragging = (e) => {
+        if (!isDragging) return;
+
+        // Calculate the new scroll position
+        const newScrollLeft = startScrollLeft - (e.pageX - startX);
+
+        // Check if the new scroll position exceeds
+        // the carousel boundaries
+        if (newScrollLeft <= 0 || newScrollLeft >=
+            carousel.scrollWidth - carousel.offsetWidth) {
+
+            // If so, prevent further dragging
+            isDragging = false;
+            return;
+        }
+
+        // Otherwise, update the scroll position of the carousel
+        carousel.scrollLeft = newScrollLeft;
+    };
+
+    const dragStop = () => {
+        isDragging = false;
+        carousel.classList.remove("dragging");
+    };
+
+    const autoPlay = () => {
+
+        // Return if window is smaller than 800
+        if (window.innerWidth < 800) return;
+
+        // Calculate the total width of all cards
+        const totalCardWidth = carousel.scrollWidth;
+
+        // Calculate the maximum scroll position
+        const maxScrollLeft = totalCardWidth - carousel.offsetWidth;
+
+        // If the carousel is at the end, stop autoplay
+        if (carousel.scrollLeft >= maxScrollLeft) return;
+
+        // Autoplay the carousel after every 2500ms
+        timeoutId = setTimeout(() =>
+            carousel.scrollLeft += firstCardWidth, 2500);
+    };
+
+    carousel.addEventListener("mousedown", dragStart);
+    carousel.addEventListener("mousemove", dragging);
+    document.addEventListener("mouseup", dragStop);
+    wrapper.addEventListener("mouseenter", () =>
+        clearTimeout(timeoutId));
+    wrapper.addEventListener("mouseleave", autoPlay);
+
+    // Add event listeners for the arrow buttons to
+    // scroll the carousel left and right
+    arrowBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+            carousel.scrollLeft += btn.id === "left" ?
+                -firstCardWidth : firstCardWidth;
+        });
+    });
+});

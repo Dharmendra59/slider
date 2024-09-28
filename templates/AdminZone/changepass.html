@@ -1,0 +1,20 @@
+{% extends "AdminZone/AdminMaster.html" %}
+{% block content %}
+
+<div class="container-fluid">
+<div class="row">
+    <div class="col-sm-4">
+        
+    <form action="/changeData/" method="post">
+        {% csrf_token %}
+        <input name="npass" type="password" >
+        <input name="cpass" type="password" >
+        <button>Change now</button>
+    </form>
+
+    </div>
+</div>
+</div>        
+    
+    
+{% endblock %}
